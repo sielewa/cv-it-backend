@@ -8,8 +8,6 @@ import { stringify } from 'querystring';
 import { User } from './users.interface';
 import { UserExistsException } from './exceptions/user-exists.exception';
 import { Logger } from '@nestjs/common';
-import { timingSafeEqual } from 'crypto';
-import { response } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -35,7 +33,7 @@ export class UsersService {
       throw new UserExistsException('User exist!');
     }
 
-    return { id: createdUser[0] }
+    return { id: createdUser[0] };
   }
 
   // GET USERS
@@ -57,7 +55,19 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User doesnt exist!');
     }
-    console.dir(user)
-    return { user }
+    return { user };
+  }
+
+  async findOneById(id: number): Promise<Record<string,any>> {
+    const user = await this.knex
+      .table<User>('users')
+      .where('id', id)
+      .first();
+
+    if (!user) {
+      throw new NotFoundException('User doesnt exist!');
+    }
+
+    return { user };
   }
 }

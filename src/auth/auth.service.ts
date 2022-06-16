@@ -14,7 +14,7 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const data = await this.usersService.findOneByUsername(username);
-    console.dir
+    
     const isMatch = await bcrypt.compare(password, data.user.password);
 
     if (isMatch) {
@@ -30,11 +30,10 @@ export class AuthService {
       sub: user.id
     };
 
-    console.dir(payload)
     const refreshTokenToSha256 = sha256(
       payload.sub + config.AUTH.refresh_string + Date.now(),
     );
-
+    
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
       refreshToken: refreshTokenToSha256,
