@@ -1,19 +1,28 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import config from '../../config/Config'
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { InjectKnex } from 'nestjs-knex';
+import { Knex } from 'knex';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(
+    @InjectKnex() readonly knex: Knex
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.AUTH.secret,
+      secretOrKey: process.env.SECRET,
     });
   }
 
   async validate(payload: any) {
-    return { payload }
+    const id = payload.sub;
+    const user = await this.knex
+      .table('users')
+      .where('id', id)
+      .first();
+
+    return user
   }
 }

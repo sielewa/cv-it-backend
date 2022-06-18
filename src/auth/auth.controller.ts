@@ -14,24 +14,27 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   authUser(@Request() req): Promise <Record<string,any>> {
-    return req
+    console.dir('hello')
+    return req.user
   }
 
   @UseGuards(localAuthGuard)
   @Post('login')
   async loginUser(@Request() req, @Response({ passthrough: true}) res): Promise<Record<string, any>> {
     const user = req.user;
+    console.dir(user)
     const data = await this.authService.generateTokenPairs(user);
 
     res.cookie('access_token', data.accessToken, {
       expires: new Date(Date.now() + 300000),
       path: '/'
     });
+    /*
     res.cookie('refresh_token', data.refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 604800000),
       path: '/'
-    });
+    });*/
 
     return { data }
   }

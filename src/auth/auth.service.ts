@@ -24,19 +24,19 @@ export class AuthService {
     return null
   }
 
-  async generateTokenPairs(user: any): Promise<Record<string, any>> {
+  async generateTokenPairs(user: any): Promise<Record<string,any>> {
+
     const payload = {
       username: user.username,
-      sub: user.id
+      sub: user.id,
     };
 
     const refreshTokenToSha256 = sha256(
       payload.sub + config.AUTH.refresh_string + Date.now(),
     );
-    
+
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
-      refreshToken: refreshTokenToSha256,
-    }
+      accessToken: this.jwtService.sign(payload, { expiresIn: '5m' })
+    };
   }
 }

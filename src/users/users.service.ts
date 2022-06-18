@@ -59,6 +59,7 @@ export class UsersService {
   }
 
   async findOneById(id: number): Promise<Record<string,any>> {
+    console.dir('findbyid')
     const user = await this.knex
       .table<User>('users')
       .where('id', id)
