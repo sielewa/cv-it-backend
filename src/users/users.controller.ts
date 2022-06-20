@@ -1,4 +1,5 @@
-import { Body, Controller, Post, Get, HttpCode, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Body, Param, Controller, Post, Get, HttpCode, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { NotFoundError } from 'rxjs';
 import { UserDto } from './dto/user.dto';
 import { UserExistsException } from './exceptions/user-exists.exception';
 import { UsersService } from './users.service';
@@ -27,5 +28,21 @@ export class UsersController {
   @Get()
   getAllUsers() {
     return this.userService.getUsers();
+  }
+
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    try {
+      const user = await this.userService.findOneById(+id);
+
+      if (!user) {
+        throw new NotFoundException('User doesnt exist!');
+      }
+
+      return user ;
+
+    } catch (err) {
+      throw new BadRequestException(err.message);
+    }
   }
 }

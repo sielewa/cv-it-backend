@@ -62,7 +62,8 @@ export class UsersService {
 
   async findOneById(id: number): Promise<Record<string,any>> {
     const user = await this.knex
-      .table<User>('users')
+      .select('id', 'username', 'firstName', 'lastName', 'phone', 'description', 'main_title')
+      .table('users')
       .where('id', id)
       .first();
 
@@ -70,7 +71,7 @@ export class UsersService {
       throw new NotFoundException('User doesnt exist!');
     }
 
-    return { user };
+    return user ;
   }
 
   async findOneByRefreshToken(refreshToken: string): Promise<Record<string, any>> {

@@ -9,6 +9,7 @@ import {
   IsBoolean,
   IsArray
 } from "class-validator";
+import { isInt16Array } from "util/types";
 
 export class UserDto {
   @IsString()
@@ -58,4 +59,10 @@ export class UserPasswordDto {
   @IsNotEmpty()
   @IsString()
   oldPassword: string;
+}
+
+export class UserIdDto {
+  @IsInt()
+  @IsNotEmpty()
+  id: string
 }

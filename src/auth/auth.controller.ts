@@ -18,7 +18,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   authUser(@AuthedUser() user): Promise <Record<string,any>> {
-    return user
+    return user;
   }
 
   @UseGuards(localAuthGuard)
