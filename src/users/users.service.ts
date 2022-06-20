@@ -8,6 +8,7 @@ import { stringify } from 'querystring';
 import { User } from './users.interface';
 import { UserExistsException } from './exceptions/user-exists.exception';
 import { Logger } from '@nestjs/common';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
 
   constructor(
     @InjectKnex() readonly knex: Knex,
+    private readonly redisService: RedisService
   ) {}
 
   // CREATE USER
@@ -59,7 +61,6 @@ export class UsersService {
   }
 
   async findOneById(id: number): Promise<Record<string,any>> {
-    console.dir('findbyid')
     const user = await this.knex
       .table<User>('users')
       .where('id', id)
@@ -70,5 +71,14 @@ export class UsersService {
     }
 
     return { user };
+  }
+
+  async findOneByRefreshToken(refreshToken: string): Promise<Record<string, any>> {
+    const userId = await this.redisService.get(refreshToken);
+    if (!userId) {
+      return null
+    }
+    const user = await this.knex.table<User>('users').where('id', userId).first();
+    return user;
   }
 }

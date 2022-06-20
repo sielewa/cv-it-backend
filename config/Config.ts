@@ -11,7 +11,10 @@ const {
   API_PREFIX,
   SECRET,
   REFRESH_STRING,
-  SALT_OR_ROUNDS
+  SALT_OR_ROUNDS,
+  REDIS_HOST,
+  REDIS_PORT,
+  REDIS_DB,
 } = process.env;
 
 const DB = {
@@ -33,11 +36,18 @@ const BCRYPT = {
   saltOrRounds: SALT_OR_ROUNDS
 }
 
+const REDIS = {
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  db: REDIS_DB
+}
+
 const config = {
   DB,
   api_prefix,
   AUTH,
-  BCRYPT
+  BCRYPT,
+  REDIS
 };
 
 export default config;

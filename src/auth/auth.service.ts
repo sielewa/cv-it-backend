@@ -4,12 +4,14 @@ import { JwtService } from '@nestjs/jwt';
 import { sha256 } from 'js-sha256';
 import * as bcrypt from 'bcrypt';
 import config from '../../config/Config';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private redisService: RedisService
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
@@ -19,9 +21,9 @@ export class AuthService {
 
     if (isMatch) {
       const { password, ...result } = data.user;
-      return result
+      return result;
     }
-    return null
+    return null;
   }
 
   async generateTokenPairs(user: any): Promise<Record<string,any>> {
@@ -35,8 +37,11 @@ export class AuthService {
       payload.sub + config.AUTH.refresh_string + Date.now(),
     );
 
+    await this.redisService.set(refreshTokenToSha256, payload.sub.toString());
+
     return {
-      accessToken: this.jwtService.sign(payload, { expiresIn: '5m' })
+      accessToken: this.jwtService.sign(payload, { expiresIn: '5m' }),
+      refreshToken: refreshTokenToSha256
     };
   }
 }

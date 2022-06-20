@@ -6,6 +6,7 @@ import { KnexModule } from 'nestjs-knex';
 import { AuthModule } from './auth/auth.module';
 import config from '../config/Config';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ConfigModule } from '@nestjs/config';
       }
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    RedisModule
   ],
   controllers: [AppController],
   providers: [AppService],
